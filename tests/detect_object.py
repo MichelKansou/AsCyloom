@@ -44,11 +44,13 @@ for frame in camera.capture_continuous(
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, lower, upper)
-    mask2 = mask.copy()
-
+    mask = cv2.erode(mask, None, iterations=2)
+	mask = cv2.dilate(mask, None, iterations=2)
+    
     # find contours in the mask image
-    contours, hierarchy = cv2.findContours(
-        mask2, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
+		cv2.CHAIN_APPROX_SIMPLE)[-2]
+	center = None
 
     # finding contour with maximum area and store it as best_cnt
     max_area = 0
