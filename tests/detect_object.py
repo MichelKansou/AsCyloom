@@ -45,12 +45,13 @@ for frame in camera.capture_continuous(
 
     mask = cv2.inRange(hsv, lower, upper)
     mask = cv2.erode(mask, None, iterations=2)
-	mask = cv2.dilate(mask, None, iterations=2)
-    
+    mask = cv2.dilate(mask, None, iterations=2)
+    mask2 = mask.copy()
+
     # find contours in the mask image
-    contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-		cv2.CHAIN_APPROX_SIMPLE)[-2]
-	center = None
+    contours = cv2.findContours(mask2, cv2.RETR_EXTERNAL,
+                                cv2.CHAIN_APPROX_SIMPLE)[-2]
+    center = None
 
     # finding contour with maximum area and store it as best_cnt
     max_area = 0
@@ -64,12 +65,13 @@ for frame in camera.capture_continuous(
     if isset('best_cnt'):
         M = cv2.moments(best_cnt)
         cx, cy = int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])
-        cv2.circle(frame, (cx, cy), 5, 255, -1)
+        cv2.circle(image, (cx, cy), 5, 255, -1)
         print("Central pos: (%d, %d)" % (cx, cy))
     else:
         print("[Warning]Tag lost...")
     # show the frame
     cv2.imshow("Frame", image)
+    cv2.imshow("thresh", mask2)
     key = cv2.waitKey(1) & 0xFF
 
     # clear the stream in preparation for the next frame
