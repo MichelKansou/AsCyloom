@@ -6,7 +6,7 @@ import cv2
 
 
 # cascade directory
-cascPath = './resources/cascade.xml'
+cascPath = './resources/cascade_old.xml'
 cokeCascade = cv2.CascadeClassifier(cascPath)
 
 # initialize the camera and grab a reference to the raw camera capture
@@ -26,19 +26,19 @@ for frame in camera.capture_continuous(
     image = frame.array
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    cokes = cokeCascade.detectMultiScale(gray)
+    cokes = cokeCascade.detectMultiScale(gray, 40, 90)
 
     # Draw a rectangle around the faces
     for (x, y, w, h) in cokes:
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        # show the frame
-        cv2.imshow("Tracking", image)
-        key = cv2.waitKey(1) & 0xFF
+    # show the frame
+    cv2.imshow("Tracking", image)
+    key = cv2.waitKey(1) & 0xFF
 
-        # clear the stream in preparation for the next frame
-        rawCapture.truncate(0)
+    # clear the stream in preparation for the next frame
+    rawCapture.truncate(0)
 
-        # if the `q` key was pressed, break from the loop
-        if key == ord("q"):
-            break
+    # if the `q` key was pressed, break from the loop
+    if key == ord("q"):
+       break
