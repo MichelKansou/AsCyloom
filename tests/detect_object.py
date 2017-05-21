@@ -20,8 +20,8 @@ def isset(v):
 
 # define the lower and upper boundaries of the coke
 # define the list of boundaries
-lower = (120, 80, 80)
-upper = (180, 255, 255)
+lower = (229, 63, 20)
+upper = (229, 98, 49)
 
 
 # initialize the camera and grab a reference to the raw camera capture
