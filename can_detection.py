@@ -6,7 +6,7 @@ import cv2
 
 
 # cascade directory
-cascPath = './resources/cascade_old.xml'
+cascPath = './resources/cascade_2.xml'
 cokeCascade = cv2.CascadeClassifier(cascPath)
 
 # initialize the camera and grab a reference to the raw camera capture
