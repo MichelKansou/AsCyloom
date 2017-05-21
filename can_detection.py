@@ -26,7 +26,7 @@ for frame in camera.capture_continuous(
     image = frame.array
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    cokes = cokeCascade.detectMultiScale(gray, 40, 90)
+    cokes = cokeCascade.detectMultiScale(gray, 2, 10)
 
     # Draw a rectangle around the faces
     for (x, y, w, h) in cokes:
