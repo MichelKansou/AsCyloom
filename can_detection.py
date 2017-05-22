@@ -34,39 +34,18 @@ for frame in camera.capture_continuous(
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     cokes = cokeCascade.detectMultiScale(gray, 2, 10)
-    mask = cokes.copy()
-
-    # find contours in the mask image
-    contours = cv2.findContours(mask, cv2.RETR_EXTERNAL,
-                                cv2.CHAIN_APPROX_SIMPLE)[-2]
-    center = None
-
-    # finding contour with maximum area and store it as best_cnt
-    max_area = 0
-    for cnt in contours:
-        area = cv2.contourArea(cnt)
-        if area > max_area:
-            max_area = area
-            best_cnt = cnt
-
 
     # finding centroids of best_cnt and draw a circle there
-    if isset('best_cnt'):
-        M = cv2.moments(best_cnt)
-        cx, cy = int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])
-        cv2.rectangle(image, (cx, cy), (0, 255, 0), 2)
-        # cv2.circle(image, (cx, cy), 5, 255, -1)
-        print("Central pos: (%d, %d)" % (cx, cy))
+    if isset('cokes'):
+        # Draw a rectangle around the faces
+        for (x, y, w, h) in cokes:
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        print("Central pos: (%d, %d)" % (cokes.x, cokes.y))
     else:
-        print("[Warning]no Taget Found...")
-
-    # Draw a rectangle around the faces
-    # for (x, y, w, h) in cokes:
-    #     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        print("[Warning]Tag lost...")
 
     # show the frame
     cv2.imshow("Tracking", image)
-    cv2.imshow("thresh", mask)
     key = cv2.waitKey(1) & 0xFF
 
     # clear the stream in preparation for the next frame
