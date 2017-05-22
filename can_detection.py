@@ -13,7 +13,7 @@ def isset(v):
         return 1
 
 # cascade directory
-cascPath = './resources/cascade_2.xml'
+cascPath = './resources/cascade_5.xml'
 cokeCascade = cv2.CascadeClassifier(cascPath)
 
 # initialize the camera and grab a reference to the raw camera capture
@@ -33,14 +33,14 @@ for frame in camera.capture_continuous(
     image = frame.array
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    cokes = cokeCascade.detectMultiScale(gray, 2, 10)
+    cokes = cokeCascade.detectMultiScale(gray, 2, 25)
 
     # finding centroids of best_cnt and draw a circle there
     if isset('cokes'):
         # Draw a rectangle around the faces
         for (x, y, w, h) in cokes:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        print("Central pos: (%d, %d)" % (cokes.x, cokes.y))
+            print("Central pos: (%d, %d)" % (x, y))
     else:
         print("[Warning]Tag lost...")
 
