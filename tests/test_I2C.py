@@ -5,8 +5,6 @@ import time
 bus = smbus.SMBus(1)
 address = 0x12
 
-# Pause de 1 seconde pour laisser le temps au traitement de se faire
-time.sleep(1)
-
-reponse = bus.read_byte(address)
-print ("Object detection : ", response)
+while 1: 
+   reponse = bus.read_byte(address)
+   print ("Detecting Object : ", reponse)
