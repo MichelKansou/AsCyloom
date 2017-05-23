@@ -44,28 +44,28 @@ for frame in camera.capture_continuous(
         # grab the raw NumPy array representing the image, then initialize the timestamp
         # and occupied/unoccupied text
     image = frame.array
-    if (searching == True and goToBase == False):
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cokes = cokeCascade.detectMultiScale(gray, 2, 25)
-        # If a can of coke was found
-        if isset('cokes'):
-            if objectDetected != 1:
-                objectDetected = 1
-                bus.write_byte(address, 11)
-            # Draw a rectangle around the cokes
-            for (x, y, w, h) in cokes:
-                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                bx = x + w
-                by = y + h
-                ox = (x + bx)/2
-                oy = (y + by)/2
-                print("Target  position: (%d, %d)" % (ox, oy))
-        else:
-            targetLost += 1
-            print("[Warning]Target lost...")
-            if objectDetected != 0:
-                objectDetected = 0
-                bus.write_byte(address, 12)
+    #if (searching == True and goToBase == False):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cokes = cokeCascade.detectMultiScale(gray, 2, 25)
+    # If a can of coke was found
+    if isset('cokes'):
+        if objectDetected != 1:
+            objectDetected = 1
+            bus.write_byte(address, 11)
+        # Draw a rectangle around the cokes
+        for (x, y, w, h) in cokes:
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            bx = x + w
+            by = y + h
+            ox = (x + bx)/2
+            oy = (y + by)/2
+            print("Target  position: (%d, %d)" % (ox, oy))
+    else:
+        targetLost += 1
+        print("[Warning]Target lost...")
+        if objectDetected != 0:
+            objectDetected = 0
+            bus.write_byte(address, 12)
             #    if (ox > 280 and ox < 360):
             #        print("Center")
             #        print ("Send Move Forward")
