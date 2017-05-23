@@ -48,11 +48,12 @@ for frame in camera.capture_continuous(
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     cokes = cokeCascade.detectMultiScale(gray, 2, 25)
     # If a can of coke was found
+    print (isset('cokes'))
     if isset('cokes'):
         print("Object Detected")
-        if objectDetected != 1:
-            objectDetected = 1
-            bus.write_byte(address, 11)
+        #if objectDetected != 1:
+           # objectDetected = 1
+           # bus.write_byte(address, 11)
         # Draw a rectangle around the cokes
         for (x, y, w, h) in cokes:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
