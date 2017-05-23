@@ -36,11 +36,13 @@ for frame in camera.capture_continuous(
         # grab the raw NumPy array representing the image, then initialize the timestamp
         # and occupied/unoccupied text
     image = frame.array
+    print("Object Distance : %d" % bus.read_byte(address))
     if (searching == True and goToBase == False):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cokes = cokeCascade.detectMultiScale(gray, 2, 25)
         # If a can of coke was found
-        if len('cokes') > 0:
+        if len(cokes) > 0:
+            targetLost = 0
             if objectDetected != 1:
                  objectDetected = 1
                  bus.write_byte(address, 11)
@@ -51,20 +53,23 @@ for frame in camera.capture_continuous(
                 by = y + h
                 ox = (x + bx)/2
                 oy = (y + by)/2
-                print("A :(%d, %d)" % (x, y))
-                if (ox > 280 and ox < 360):
+                if (ox > 290 and ox < 350):
                    print("Center")
                    print ("Send Move Forward")
                    if direction != 1:
                        direction = 1
-                        bus.write_byte(address, 1)
-                elif ox > 360:
+                   bus.write_byte(address, 0)
+                   if bus.read_byte(address) < 10:
+                       bus.write_byte(address, 0)
+                   else:
+                       bus.write_byte(address, 1) 
+                elif ox > 350:
                    print("Right")
                    print("Send Move to Right")
                    if direction != 4:
                        direction = 4
                        bus.write_byte(address, 4)
-                elif ox < 280:
+                elif ox < 290:
                    print("Left")
                    print("Send Move to Left")
                    if direction !=3:
@@ -76,14 +81,17 @@ for frame in camera.capture_continuous(
            if objectDetected != 0:
               objectDetected = 0
               bus.write_byte(address, 12)
-           print("[Warning]Target lost...")
-        if (goToBase == True and searching == False):
-            targetLost = 0
-            print("Going to base sir")
-        if (targetLost > 20 and direction != 0):
-            print("Stop")
-            direction = 0
-            bus.write_byte(address, 0)
+              print("[Warning]Target lost...")
+    if (goToBase == True and searching == False):
+        targetLost = 0
+        print("Going to base sir")
+    if (targetLost > 5 and direction != 0):
+        print("Stop")
+        direction = 0
+        bus.write_byte(address, 0)
+        bus.write_byte(address, 2)
+        time.sleep(0.5)
+        bus.write_byte(address, 4)
     # show the frame
     cv2.imshow("Tracking", image)
     key = cv2.waitKey(1) & 0xFF
