@@ -127,6 +127,39 @@ for frame in camera.capture_continuous(
             cx, cy = int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])
             cv2.rectangle(image, (cx, cy), (cx + 10, cy + 20), (255, 255, 0), 2)
             print("Base Position: (%d, %d)" % (cx, cy))
+            if (cx > 290 and cx < 350):
+               print("Center")
+               print ("Send Move Forward")
+               if direction != 1:
+                   direction = 1
+               bus.write_byte(address, 0)
+               if bus.read_byte(address) < 10:
+                   bus.write_byte(address, 0)
+               else:
+                   bus.write_byte(address, 1)
+            elif cx > 350:
+               print("Right")
+               print("Send Move to Right")
+               if direction != 4:
+                   direction = 4
+                   bus.write_byte(address, 4)
+            elif cx < 290:
+               print("Left")
+               print("Send Move to Left")
+               if direction !=3:
+                   direction = 3
+                   bus.write_byte(address, 3)
+        else:
+            print("Stop")
+            direction = 0
+            bus.write_byte(address, 0)
+            if (bus.read_byte(address) < 10):
+                bus.write_byte(address, 2)
+                time.sleep(0.5)
+                bus.write_byte(address, 4)
+            else:
+                bus.write_byte(address, 4)
+
     if (targetLost > 5 and direction != 0):
         print("Stop")
         direction = 0
