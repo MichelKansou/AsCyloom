@@ -30,16 +30,17 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 
 # define the lower and upper boundaries for extraction point
 # define the list of boundaries
-lower = (229, 63, 20)
-upper = (229, 98, 49)
+lower = (17, 15, 100)
+upper = (50, 56, 200)
 
 
 # initialize IA
-searching = True
-goToBase = False
+searching = False
+goToBase = True
 targetLost = 0
 direction = 0
 objectDetected = 0
+ColorDetectionImage = 0
 
 # allow the camera to warmup
 time.sleep(0.1)
@@ -104,10 +105,10 @@ for frame in camera.capture_continuous(
         mask = cv2.inRange(hsv, lower, upper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
-        mask2 = mask.copy()
+        ColorDetectionImage = mask.copy()
 
         # find contours in the mask image
-        contours = cv2.findContours(mask2, cv2.RETR_EXTERNAL,
+        contours = cv2.findContours(ColorDetectionImage, cv2.RETR_EXTERNAL,
                                     cv2.CHAIN_APPROX_SIMPLE)[-2]
         center = None
 
@@ -124,7 +125,7 @@ for frame in camera.capture_continuous(
             print("Going to base sir")
             M = cv2.moments(best_cnt)
             cx, cy = int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])
-            cv2.circle(image, (cx, cy), 5, 255, -1)
+            cv2.rectangle(image, (cx, cy), (cx + 10, cy + 20), (255, 255, 0), 2)
             print("Base Position: (%d, %d)" % (cx, cy))
     if (targetLost > 5 and direction != 0):
         print("Stop")
@@ -137,7 +138,9 @@ for frame in camera.capture_continuous(
         else:
             bus.write_byte(address, 4)
     # show the frame
-    #cv2.imshow("Tracking", image)
+    cv2.imshow("Tracking", image)
+    if (len(ColorDetectionImage) > 0):
+        cv2.imshow("Infra", ColorDetectionImage)
     key = cv2.waitKey(1) & 0xFF
 
     # clear the stream in preparation for the next frame
