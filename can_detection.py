@@ -89,11 +89,14 @@ for frame in camera.capture_continuous(
         print("Stop")
         direction = 0
         bus.write_byte(address, 0)
-        bus.write_byte(address, 2)
-        time.sleep(0.5)
-        bus.write_byte(address, 4)
+        if (bus.read_byte(address) < 10):
+            bus.write_byte(address, 2)
+            time.sleep(0.5)
+            bus.write_byte(address, 4)
+        else:
+            bus.write_byte(address, 4)
     # show the frame
-    cv2.imshow("Tracking", image)
+    #cv2.imshow("Tracking", image)
     key = cv2.waitKey(1) & 0xFF
 
     # clear the stream in preparation for the next frame
