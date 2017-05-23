@@ -30,14 +30,8 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 
 # define the lower and upper boundaries for extraction point
 # define the list of boundaries
-# lower = (17, 15, 100)
-# upper = (50, 56, 200)
-boundaries = [
-	([17, 15, 100], [50, 56, 200]),
-	([86, 31, 4], [220, 88, 50]),
-	([25, 146, 190], [62, 174, 250]),
-	([103, 86, 65], [145, 133, 128])
-]
+lower = (17, 15, 100)
+upper = (50, 56, 200)
 
 
 # initialize IA
@@ -108,15 +102,10 @@ for frame in camera.capture_continuous(
         blurred = cv2.GaussianBlur(image, (11, 11), 0)
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-        # loop over the boundaries
-        for (lower, upper) in boundaries:
-        	# create NumPy arrays from the boundaries
-        	lower = np.array(lower, dtype = "uint8")
-        	upper = np.array(upper, dtype = "uint8")
-            mask = cv2.inRange(hsv, lower, upper)
-            mask = cv2.erode(mask, None, iterations=2)
-            mask = cv2.dilate(mask, None, iterations=2)
-            ColorDetectionImage = mask.copy()
+        mask = cv2.inRange(hsv, lower, upper)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
+        ColorDetectionImage = mask.copy()
 
         # find contours in the mask image
         contours = cv2.findContours(ColorDetectionImage, cv2.RETR_EXTERNAL,
