@@ -1,9 +1,18 @@
 # import the necessary packages
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+import imutils
 import time
 import smbus
 import cv2
+
+def isset(v):
+    try:
+        type(eval(v))
+    except BaseException:
+        return 0
+    else:
+        return 1
 
 # cascade directory
 cascPath = './resources/cascade_5.xml'
@@ -18,6 +27,11 @@ camera = PiCamera()
 camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(640, 480))
+
+# define the lower and upper boundaries for extraction point
+# define the list of boundaries
+lower = (229, 63, 20)
+upper = (229, 98, 49)
 
 
 # initialize IA
@@ -83,8 +97,35 @@ for frame in camera.capture_continuous(
               bus.write_byte(address, 12)
               print("[Warning]Target lost...")
     if (goToBase == True and searching == False):
-        targetLost = 0
-        print("Going to base sir")
+        image = imutils.resize(image, width=600)
+        blurred = cv2.GaussianBlur(image, (11, 11), 0)
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+        mask = cv2.inRange(hsv, lower, upper)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
+        mask2 = mask.copy()
+
+        # find contours in the mask image
+        contours = cv2.findContours(mask2, cv2.RETR_EXTERNAL,
+                                    cv2.CHAIN_APPROX_SIMPLE)[-2]
+        center = None
+
+        # finding contour with maximum area and store it as best_cnt
+        max_area = 0
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            if area > max_area:
+                max_area = area
+                best_cnt = cnt
+        # finding centroids of best_cnt and draw a circle there
+        if isset('best_cnt'):
+            targetLost = 0
+            print("Going to base sir")
+            M = cv2.moments(best_cnt)
+            cx, cy = int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])
+            cv2.circle(image, (cx, cy), 5, 255, -1)
+            print("Base Position: (%d, %d)" % (cx, cy))
     if (targetLost > 5 and direction != 0):
         print("Stop")
         direction = 0
