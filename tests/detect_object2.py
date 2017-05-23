@@ -14,7 +14,7 @@ def isset(v):
         return 1
 
 # cascade directory
-cascPath = './resources/cascade_5.xml'
+cascPath = '../resources/cascade_5.xml'
 cokeCascade = cv2.CascadeClassifier(cascPath)
 
 # I2C Raspberry
@@ -39,13 +39,13 @@ for frame in camera.capture_continuous(
     #if (searching == True and goToBase == False):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     cokes = cokeCascade.detectMultiScale(gray, 2, 25)
+    
     # If a can of coke was found
-    if isset('cokes'):
+    if len(cokes) > 0:
         print("Object Detected")
         # Draw a rectangle around the cokes
         for (x, y, w, h) in cokes:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            print("Target  position: (%d, %d)" % (ox, oy))
     else:
         print("[Warning]Target lost...")
 
