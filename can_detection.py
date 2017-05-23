@@ -30,8 +30,8 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 
 # define the lower and upper boundaries for extraction point
 # define the list of boundaries
-lower = (17, 15, 100)
-upper = (50, 56, 200)
+lower = (0, 100, 100)
+upper = (179, 250, 250)
 
 
 # initialize IA
