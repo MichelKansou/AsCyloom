@@ -31,8 +31,8 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 # initialize IA
 searching = True
 goToBase = False
-
-
+Target_lost = 0
+direction = 0
 # allow the camera to warmup
 time.sleep(0.1)
 
@@ -42,7 +42,7 @@ for frame in camera.capture_continuous(
         # grab the raw NumPy array representing the image, then initialize the timestamp
         # and occupied/unoccupied text
     image = frame.array
-    if searching:
+    if (searching == True and goToBase == False):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cokes = cokeCascade.detectMultiScale(gray, 2, 25)
         # If a can of coke was found
@@ -58,21 +58,31 @@ for frame in camera.capture_continuous(
                 if (ox > 280 and ox < 360):
                     print("Center")
                     print ("Send Move Forward")
-                    bus.write_byte(address, 1)
+                    if direction != 1:
+                        direction = 1
+                        #bus.write_byte(address, 1)
                 if ox > 360:
                     print("Right")
                     print("Send Move to Right")
-                    bus.write_byte(address, 4)
+                    if direction != 4:
+                        direction = 4
+                        bus.write_byte(address, 4)
                 if ox < 280:
                     print("Left")
                     print("Send Move to Left")
-                    bus.write_byte(address, 3)
+                    if direction !=3:
+                        direction = 3
+                        bus.write_byte(address, 3)
                 print("Central pos: (%d, %d)" % (ox, oy))
-    if goToBase:
+    elif (goToBase == True and searching == False):
+        Target_lost = 0
         print("Going to base sir")
     else:
+        Target_lost += 1
         print("[Warning]Target lost...")
-
+    if (Target_lost > 20):
+        print("Stop")
+        bus.write_byte(address, 0)
     # show the frame
     cv2.imshow("Tracking", image)
     key = cv2.waitKey(1) & 0xFF
