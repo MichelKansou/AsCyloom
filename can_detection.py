@@ -50,8 +50,8 @@ for frame in camera.capture_continuous(
         # If a can of coke was found
         if isset('cokes'):
             if objectDetected != 1:
-                 objectDetected = 1 
-                 bus.write_byte(address, 11)
+                objectDetected = 1
+                bus.write_byte(address, 11)
             # Draw a rectangle around the cokes
             for (x, y, w, h) in cokes:
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -59,7 +59,13 @@ for frame in camera.capture_continuous(
                 by = y + h
                 ox = (x + bx)/2
                 oy = (y + by)/2
-                print("A :(%d, %d)" % (x, y))
+                print("Target  position: (%d, %d)" % (ox, oy))
+        else:
+            targetLost += 1
+            print("[Warning]Target lost...")
+            if objectDetected != 0:
+                objectDetected = 0
+                bus.write_byte(address, 12)
             #    if (ox > 280 and ox < 360):
             #        print("Center")
             #        print ("Send Move Forward")
@@ -78,13 +84,6 @@ for frame in camera.capture_continuous(
             #        if direction !=3:
             #            direction = 3
             #            bus.write_byte(address, 3)
-                print("Target  position: (%d, %d)" % (ox, oy))
-        else:
-           targetLost += 1
-           if objectDetected != 0:
-              objectDetected = 0
-              bus.write_byte(address, 12)
-           print("[Warning]Target lost...")
 #    if (goToBase == True and searching == False):
 #        targetLost = 0
 #        print("Going to base sir")
