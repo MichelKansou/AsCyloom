@@ -49,6 +49,7 @@ for frame in camera.capture_continuous(
     cokes = cokeCascade.detectMultiScale(gray, 2, 25)
     # If a can of coke was found
     if isset('cokes'):
+        print("Object Detected")
         if objectDetected != 1:
             objectDetected = 1
             bus.write_byte(address, 11)
@@ -61,11 +62,11 @@ for frame in camera.capture_continuous(
             oy = (y + by)/2
             print("Target  position: (%d, %d)" % (ox, oy))
     else:
-        targetLost += 1
         print("[Warning]Target lost...")
-        if objectDetected != 0:
-            objectDetected = 0
-            bus.write_byte(address, 12)
+        #targetLost += 1
+        #if objectDetected != 0:
+            #objectDetected = 0
+            #bus.write_byte(address, 12)
             #    if (ox > 280 and ox < 360):
             #        print("Center")
             #        print ("Send Move Forward")
