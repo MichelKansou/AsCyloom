@@ -62,7 +62,7 @@ for frame in camera.capture_continuous(
                    if bus.read_byte(address) < 10:
                        bus.write_byte(address, 0)
                    else:
-                       bus.write_byte(address, 1) 
+                       bus.write_byte(address, 1)
                 elif ox > 350:
                    print("Right")
                    print("Send Move to Right")
@@ -82,16 +82,18 @@ for frame in camera.capture_continuous(
               objectDetected = 0
               bus.write_byte(address, 12)
               print("[Warning]Target lost...")
+        if (targetLost > 5 and direction != 0):
+            print("Stop")
+            direction = 0
+            bus.write_byte(address, 0)
+            bus.write_byte(address, 4)
+            if (bus.read_byte(address) < 10):
+                bus.write_byte(address, 2)
+                time.sleep(0.5)
+                bus.write_byte(address, 4)
     if (goToBase == True and searching == False):
         targetLost = 0
         print("Going to base sir")
-    if (targetLost > 5 and direction != 0):
-        print("Stop")
-        direction = 0
-        bus.write_byte(address, 0)
-        bus.write_byte(address, 2)
-        time.sleep(0.5)
-        bus.write_byte(address, 4)
     # show the frame
     cv2.imshow("Tracking", image)
     key = cv2.waitKey(1) & 0xFF
