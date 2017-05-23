@@ -31,7 +31,7 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 # initialize IA
 searching = True
 goToBase = False
-Target_lost = 0
+targetLost = 0
 direction = 0
 # allow the camera to warmup
 time.sleep(0.1)
@@ -74,14 +74,15 @@ for frame in camera.capture_continuous(
                         direction = 3
                         bus.write_byte(address, 3)
                 print("Central pos: (%d, %d)" % (ox, oy))
-    elif (goToBase == True and searching == False):
-        Target_lost = 0
+        else:
+            targetLost += 1
+            print("[Warning]Target lost...")
+    if (goToBase == True and searching == False):
+        targetLost = 0
         print("Going to base sir")
-    else:
-        Target_lost += 1
-        print("[Warning]Target lost...")
-    if (Target_lost > 20):
+    if (targetLost > 20 and direction != 0):
         print("Stop")
+        direction = 0
         bus.write_byte(address, 0)
     # show the frame
     cv2.imshow("Tracking", image)
