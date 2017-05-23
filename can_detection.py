@@ -40,7 +40,18 @@ for frame in camera.capture_continuous(
         # Draw a rectangle around the faces
         for (x, y, w, h) in cokes:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            print("Central pos: (%d, %d)" % (x, y))
+            bx = x + w
+            by = y + h
+            ox = (x + bx)/2
+            oy = (y + by)/2
+            print("A :(%d, %d)" % (x, y))
+            if (ox > 280 and ox < 360):
+               print("Center")
+            if ox > 360: 
+               print("Right")
+            if ox < 280:
+               print("Left")
+            print("Central pos: (%d, %d)" % (ox, oy))
     else:
         print("[Warning]Tag lost...")
 
