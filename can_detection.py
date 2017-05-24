@@ -31,12 +31,12 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 # define the lower and upper boundaries for extraction point
 # define the list of boundaries
 lower = (0, 100, 100)
-upper = (179, 250, 250)
+upper = (179, 255, 255)
 
 
 # initialize IA
-searching = False
-goToBase = True
+searching = True
+goToBase = False
 targetLost = 0
 direction = 0
 objectDetected = 0
@@ -51,7 +51,7 @@ for frame in camera.capture_continuous(
         # grab the raw NumPy array representing the image, then initialize the timestamp
         # and occupied/unoccupied text
     image = frame.array
-    print("Object Distance : %d" % bus.read_byte(address))
+    print("Object Distance : %d" % (bus.read_byte(address) * 10))
     if (searching == True and goToBase == False):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cokes = cokeCascade.detectMultiScale(gray, 2, 25)
@@ -71,23 +71,35 @@ for frame in camera.capture_continuous(
                 if (ox > 290 and ox < 350):
                    print("Center")
                    print ("Send Move Forward")
+                   bus.write_byte(address, 10)
                    if direction != 1:
                        direction = 1
                    bus.write_byte(address, 0)
-                   if bus.read_byte(address) < 10:
+                   if (bus.read_byte(address) * 10) < 150:
                        bus.write_byte(address, 0)
+                       bus.write_byte(address, 1)
+                       time.sleep(0.5)
+                       bus.write_byte(address, 3)
+                       time.sleep(0.2)
+                       bus.write_byte(address, 4)
+                       time.sleep(0.2)
+                       bus.write_byte(address, 11)
+                       searching = False
+                       goToBase = True
                    else:
                        bus.write_byte(address, 1)
                 elif ox > 350:
                    print("Right")
                    print("Send Move to Right")
+                   bus.write_byte(address, 9)
                    if direction != 4:
                        direction = 4
                        bus.write_byte(address, 4)
                 elif ox < 290:
                    print("Left")
                    print("Send Move to Left")
-                   if direction !=3:
+                   bus.write_byte(address, 9)
+                   if direction != 3:
                        direction = 3
                        bus.write_byte(address, 3)
                 print("Target  position: (%d, %d)" % (ox, oy))
@@ -98,6 +110,7 @@ for frame in camera.capture_continuous(
               bus.write_byte(address, 12)
               print("[Warning]Target lost...")
     if (goToBase == True and searching == False):
+        bus.write_byte(address, 11)
         image = imutils.resize(image, width=600)
         blurred = cv2.GaussianBlur(image, (11, 11), 0)
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -130,30 +143,39 @@ for frame in camera.capture_continuous(
             if (cx > 290 and cx < 350):
                print("Center")
                print ("Send Move Forward")
+               bus.write_byte(address, 10)
                if direction != 1:
                    direction = 1
                bus.write_byte(address, 0)
-               if bus.read_byte(address) < 10:
+               if (bus.read_byte(address) * 10) < 250:
+                   bus.write_byte(address, 12)
                    bus.write_byte(address, 0)
                else:
                    bus.write_byte(address, 1)
             elif cx > 350:
                print("Right")
                print("Send Move to Right")
+               bus.write_byte(address, 9)
                if direction != 4:
                    direction = 4
                    bus.write_byte(address, 4)
             elif cx < 290:
                print("Left")
                print("Send Move to Left")
-               if direction !=3:
+               bus.write_byte(address, 9)
+               if direction != 3:
                    direction = 3
                    bus.write_byte(address, 3)
+            elif (cy > 400):
+               print("Close to base")
+               bus.write_byte(address, 0)
+               break
+               
         else:
             print("Stop")
             direction = 0
             bus.write_byte(address, 0)
-            if (bus.read_byte(address) < 10):
+            if ((bus.read_byte(address) * 10) < 300):
                 bus.write_byte(address, 2)
                 time.sleep(0.5)
                 bus.write_byte(address, 4)
@@ -164,16 +186,16 @@ for frame in camera.capture_continuous(
         print("Stop")
         direction = 0
         bus.write_byte(address, 0)
-        if (bus.read_byte(address) < 10):
+        if ((bus.read_byte(address) * 10) < 300):
             bus.write_byte(address, 2)
-            time.sleep(0.5)
+            time.sleep(0.5)	
             bus.write_byte(address, 4)
         else:
             bus.write_byte(address, 4)
     # show the frame
-    cv2.imshow("Tracking", image)
-    if (len(ColorDetectionImage) > 0):
-        cv2.imshow("Infra", ColorDetectionImage)
+    #cv2.imshow("Tracking", image)
+    #if (len(ColorDetectionImage) > 0):
+        #cv2.imshow("Infra", ColorDetectionImage)
     key = cv2.waitKey(1) & 0xFF
 
     # clear the stream in preparation for the next frame
@@ -181,4 +203,6 @@ for frame in camera.capture_continuous(
 
     # if the `q` key was pressed, break from the loop
     if key == ord("q"):
+       bus.write_byte(address, 0)
+       bus.write_byte(address, 12)
        break
