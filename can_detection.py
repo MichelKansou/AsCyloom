@@ -54,7 +54,7 @@ for frame in camera.capture_continuous(
     print("Object Distance : %d" % (bus.read_byte(address) * 10))
     if (searching == True and goToBase == False):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cokes = cokeCascade.detectMultiScale(gray, 2, 75)
+        cokes = cokeCascade.detectMultiScale(gray, 2, 80)
         # If a can of coke was found
         if len(cokes) > 0:
             targetLost = 0
@@ -71,34 +71,28 @@ for frame in camera.capture_continuous(
                 if (ox > 270 and ox < 360):
                    print("Center")
                    print ("Send Move Forward")
-                   bus.write_byte(address, 10)
                    if direction != 1:
                        direction = 1
-                       bus.write_byte(address, 0)
-                       if oy > 370:
-                          bus.write_byte(address, 0)
+                       if oy > 240:
                           bus.write_byte(address, 1)
-                          bus.write_byte(address, 12)
                           time.sleep(2)
                           searching = False
+                          print("Captured")
                           #goToBase = True
                           #remove after test
-                          bus.write_byte(address, 0)
+                          bus.write_byte(address, 4)
                           bus.write_byte(address, 12)
-                          break
                        else:
                           bus.write_byte(address, 1)
                 if ox > 360:
                    print("Right")
                    print("Send Move to Right")
-                   bus.write_byte(address, 9)
                    if direction != 4:
                        direction = 4
                        bus.write_byte(address, 4)
                 if ox < 270:
                    print("Left")
                    print("Send Move to Left")
-                   bus.write_byte(address, 9)
                    if direction != 3:
                        direction = 3
                        bus.write_byte(address, 3)
@@ -110,16 +104,15 @@ for frame in camera.capture_continuous(
               objectDetected = 0
               bus.write_byte(address, 12)
               print("[Warning]Target lost...")
-           if (targetLost > 5 and direction != 0):
+           if (targetLost > 5):
                print("Stop")
-               direction = 0
-               bus.write_byte(address, 0)
-               if ((bus.read_byte(address) * 10) < 200):
+               bus.write_byte(address, 1)
+               if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70) and bus.read_byte(address) != 0):
                    bus.write_byte(address, 2)
                    time.sleep(0.5)
                    bus.write_byte(address, 4)
                else:
-                   bus.write_byte(address, 4)
+                   bus.write_byte(address, 3)
     if (goToBase == True and searching == False):
         bus.write_byte(address, 11)
         image = imutils.resize(image, width=600)
