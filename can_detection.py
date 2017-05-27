@@ -74,20 +74,20 @@ for frame in camera.capture_continuous(
                    bus.write_byte(address, 10)
                    if direction != 1:
                        direction = 1
-                   bus.write_byte(address, 0)
-                    if oy > 390:
-                        bus.write_byte(address, 0)
-                        bus.write_byte(address, 1)
-                        bus.write_byte(address, 12)
-                        time.sleep(2)
-                        searching = False
-                        #goToBase = True
-                        #remove after test
-                        bus.write_byte(address, 0)
-                        bus.write_byte(address, 12)
-                        break
-                    else:
-                        bus.write_byte(address, 1)
+                       bus.write_byte(address, 0)
+                       if oy > 370:
+                          bus.write_byte(address, 0)
+                          bus.write_byte(address, 1)
+                          bus.write_byte(address, 12)
+                          time.sleep(2)
+                          searching = False
+                          #goToBase = True
+                          #remove after test
+                          bus.write_byte(address, 0)
+                          bus.write_byte(address, 12)
+                          break
+                       else:
+                          bus.write_byte(address, 1)
                 if ox > 360:
                    print("Right")
                    print("Send Move to Right")
@@ -105,8 +105,6 @@ for frame in camera.capture_continuous(
                 print("Target  position: (%d, %d)" % (ox, oy))
         else:
            targetLost += 1
-           bus.write_byte(address, 4)
-           time.sleep(0.2)
            bus.write_byte(address, 1)
            if objectDetected != 0:
               objectDetected = 0
@@ -190,14 +188,14 @@ for frame in camera.capture_continuous(
         print("Stop")
         direction = 0
         bus.write_byte(address, 0)
-        if ((bus.read_byte(address) * 10) < 300):
+        if ((bus.read_byte(address) * 10) < 200):
             bus.write_byte(address, 2)
             time.sleep(0.5)
             bus.write_byte(address, 4)
         else:
             bus.write_byte(address, 4)
     # show the frame
-    cv2.imshow("Tracking", image)
+    #cv2.imshow("Tracking", image)
     #if (len(ColorDetectionImage) > 0):
         #cv2.imshow("Infra", ColorDetectionImage)
     key = cv2.waitKey(1) & 0xFF
