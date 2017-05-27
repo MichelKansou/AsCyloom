@@ -74,12 +74,11 @@ for frame in camera.capture_continuous(
                    if direction != 1:
                        direction = 1
                        if oy > 240:
+                          print("Captured")
                           bus.write_byte(address, 1)
                           time.sleep(2)
                           searching = False
-                          print("Captured")
-                          #goToBase = True
-                          #remove after test
+                          goToBase = True
                           bus.write_byte(address, 4)
                           bus.write_byte(address, 12)
                        else:
@@ -179,8 +178,8 @@ for frame in camera.capture_continuous(
         else:
             print("Stop")
             direction = 0
-            bus.write_byte(address, 0)
-            if ((bus.read_byte(address) * 10) < 300):
+            bus.write_byte(address, 1)
+            if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70) and bus.read_byte(address) != 0):
                 bus.write_byte(address, 2)
                 time.sleep(0.5)
                 bus.write_byte(address, 4)
