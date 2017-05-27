@@ -6,5 +6,5 @@ bus = smbus.SMBus(1)
 address = 0x12
 
 while 1: 
-   reponse = bus.read_byte(address)
+   reponse = bus.write_byte(address, 1)
    print ("Detecting Object : ", reponse)

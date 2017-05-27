@@ -15,7 +15,7 @@ def isset(v):
         return 1
 
 # cascade directory
-cascPath = './resources/cascade_5.xml'
+cascPath = './resources/cascade_extreme.xml'
 cokeCascade = cv2.CascadeClassifier(cascPath)
 
 # I2C Raspberry
@@ -54,7 +54,7 @@ for frame in camera.capture_continuous(
     print("Object Distance : %d" % (bus.read_byte(address) * 10))
     if (searching == True and goToBase == False):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cokes = cokeCascade.detectMultiScale(gray, 2, 50)
+        cokes = cokeCascade.detectMultiScale(gray, 2, 75)
         # If a can of coke was found
         if len(cokes) > 0:
             targetLost = 0
@@ -75,13 +75,13 @@ for frame in camera.capture_continuous(
                    if direction != 1:
                        direction = 1
                    bus.write_byte(address, 0)
-                   if (bus.read_byte(address) * 10) < 300:
+                   if ox > 470:
                        bus.write_byte(address, 0)
                        bus.write_byte(address, 1)
                        bus.write_byte(address, 12)
                        time.sleep(2)
-                       searching = False
-                       goToBase = True
+                       #searching = False
+                       #goToBase = True
                    else:
                        bus.write_byte(address, 1)
                 if ox > 360:
@@ -102,13 +102,13 @@ for frame in camera.capture_continuous(
         else:
            targetLost += 1
            bus.write_byte(address, 4)
-           time.sleep(0.5)
+           time.sleep(0.2)
            bus.write_byte(address, 1)
            if objectDetected != 0:
               objectDetected = 0
               bus.write_byte(address, 12)
               print("[Warning]Target lost...")
-    if (goToBase == True and searching == False):
+    if (goToBase == False and searching == False):
         bus.write_byte(address, 11)
         image = imutils.resize(image, width=600)
         blurred = cv2.GaussianBlur(image, (11, 11), 0)
@@ -193,7 +193,7 @@ for frame in camera.capture_continuous(
         else:
             bus.write_byte(address, 4)
     # show the frame
-    #cv2.imshow("Tracking", image)
+    cv2.imshow("Tracking", image)
     #if (len(ColorDetectionImage) > 0):
         #cv2.imshow("Infra", ColorDetectionImage)
     key = cv2.waitKey(1) & 0xFF
