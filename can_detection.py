@@ -75,15 +75,19 @@ for frame in camera.capture_continuous(
                    if direction != 1:
                        direction = 1
                    bus.write_byte(address, 0)
-                   if ox > 470:
-                       bus.write_byte(address, 0)
-                       bus.write_byte(address, 1)
-                       bus.write_byte(address, 12)
-                       time.sleep(2)
-                       #searching = False
-                       #goToBase = True
-                   else:
-                       bus.write_byte(address, 1)
+                    if oy > 390:
+                        bus.write_byte(address, 0)
+                        bus.write_byte(address, 1)
+                        bus.write_byte(address, 12)
+                        time.sleep(2)
+                        searching = False
+                        #goToBase = True
+                        #remove after test
+                        bus.write_byte(address, 0)
+                        bus.write_byte(address, 12)
+                        break
+                    else:
+                        bus.write_byte(address, 1)
                 if ox > 360:
                    print("Right")
                    print("Send Move to Right")
@@ -108,7 +112,7 @@ for frame in camera.capture_continuous(
               objectDetected = 0
               bus.write_byte(address, 12)
               print("[Warning]Target lost...")
-    if (goToBase == False and searching == False):
+    if (goToBase == True and searching == False):
         bus.write_byte(address, 11)
         image = imutils.resize(image, width=600)
         blurred = cv2.GaussianBlur(image, (11, 11), 0)
@@ -170,7 +174,7 @@ for frame in camera.capture_continuous(
                bus.write_byte(address, 0)
                bus.write_byte(address, 12)
                break
-               
+
         else:
             print("Stop")
             direction = 0
@@ -188,7 +192,7 @@ for frame in camera.capture_continuous(
         bus.write_byte(address, 0)
         if ((bus.read_byte(address) * 10) < 300):
             bus.write_byte(address, 2)
-            time.sleep(0.5)	
+            time.sleep(0.5)
             bus.write_byte(address, 4)
         else:
             bus.write_byte(address, 4)
