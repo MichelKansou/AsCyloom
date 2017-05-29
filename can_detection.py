@@ -106,12 +106,14 @@ for frame in camera.capture_continuous(
            if (targetLost > 5):
                print("Stop")
                bus.write_byte(address, 1)
+               time.sleep(1)
                if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70) and bus.read_byte(address) != 0):
                    bus.write_byte(address, 2)
                    time.sleep(0.5)
                    bus.write_byte(address, 4)
                else:
                    bus.write_byte(address, 3)
+                   time.sleep(0.5)
     if (goToBase == True and searching == False):
         bus.write_byte(address, 11)
         image = imutils.resize(image, width=600)
@@ -179,12 +181,14 @@ for frame in camera.capture_continuous(
             print("Stop")
             direction = 0
             bus.write_byte(address, 1)
+            time.sleep(1)
             if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70) and bus.read_byte(address) != 0):
                 bus.write_byte(address, 2)
                 time.sleep(0.5)
                 bus.write_byte(address, 4)
             else:
                 bus.write_byte(address, 4)
+                time.sleep(0.5)
     # show the frame
     #cv2.imshow("Tracking", image)
     #if (len(ColorDetectionImage) > 0):
