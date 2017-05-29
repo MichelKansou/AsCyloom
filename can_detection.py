@@ -168,7 +168,7 @@ for frame in camera.capture_continuous(
                if direction != 3:
                    direction = 3
                    bus.write_byte(address, 3)
-            if (cy > 380):
+            if (cy > 400):
                print("Close to base")
                bus.write_byte(address, 0)
                bus.write_byte(address, 12)
