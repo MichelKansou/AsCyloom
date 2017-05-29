@@ -71,6 +71,8 @@ for frame in camera.capture_continuous(
                 if (ox > 270 and ox < 360):
                    print("Center")
                    print ("Send Move Forward")
+                   bus.write_byte(address, 0)
+                   time.sleep(1)
                    if direction != 1:
                        direction = 1
                        if oy > 240:
@@ -109,8 +111,9 @@ for frame in camera.capture_continuous(
                time.sleep(1)
                if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70)):
                    bus.write_byte(address, 2)
-                   time.sleep(0.5)
+                   time.sleep(1)
                    bus.write_byte(address, 4)
+                   time.sleep(0.5)
                else:
                    bus.write_byte(address, 3)
                    time.sleep(0.5)
@@ -184,8 +187,9 @@ for frame in camera.capture_continuous(
             time.sleep(1)
             if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70)):
                 bus.write_byte(address, 2)
-                time.sleep(0.5)
+                time.sleep(1)
                 bus.write_byte(address, 4)
+                time.sleep(0.5)
             else:
                 bus.write_byte(address, 4)
                 time.sleep(0.5)
