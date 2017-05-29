@@ -54,7 +54,7 @@ for frame in camera.capture_continuous(
     print("Object Distance : %d" % (bus.read_byte(address) * 10))
     if (searching == True and goToBase == False):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cokes = cokeCascade.detectMultiScale(gray, 2, 80)
+        cokes = cokeCascade.detectMultiScale(gray, 2, 23)
         # If a can of coke was found
         if len(cokes) > 0:
             targetLost = 0
@@ -72,13 +72,11 @@ for frame in camera.capture_continuous(
                    print("Center")
                    print ("Send Move Forward")
                    bus.write_byte(address, 0)
-                   time.sleep(1)
                    if direction != 1:
                        direction = 1
                        if oy > 240:
                           print("Captured")
                           bus.write_byte(address, 1)
-                          time.sleep(2)
                           searching = False
                           goToBase = True
                           bus.write_byte(address, 4)
@@ -108,15 +106,11 @@ for frame in camera.capture_continuous(
            if (targetLost > 5):
                print("Stop")
                bus.write_byte(address, 1)
-               time.sleep(1)
                if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70)):
                    bus.write_byte(address, 2)
-                   time.sleep(1)
                    bus.write_byte(address, 4)
-                   time.sleep(0.5)
                else:
                    bus.write_byte(address, 3)
-                   time.sleep(0.5)
     if (goToBase == True and searching == False):
         bus.write_byte(address, 11)
         image = imutils.resize(image, width=600)
@@ -184,15 +178,11 @@ for frame in camera.capture_continuous(
             print("Stop")
             direction = 0
             bus.write_byte(address, 1)
-            time.sleep(1)
             if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70)):
                 bus.write_byte(address, 2)
-                time.sleep(1)
                 bus.write_byte(address, 4)
-                time.sleep(0.5)
             else:
                 bus.write_byte(address, 4)
-                time.sleep(0.5)
     # show the frame
     #cv2.imshow("Tracking", image)
     #if (len(ColorDetectionImage) > 0):
