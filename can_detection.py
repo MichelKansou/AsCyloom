@@ -109,7 +109,6 @@ for frame in camera.capture_continuous(
                if ((bus.read_byte(address) * 10) < 500):
                    bus.write_byte(address, 2)
                    time.sleep(1)
-                   bus.write_byte(address, 4)
                else:
                    bus.write_byte(address, 3)
     if (goToBase == True and searching == False):
@@ -182,7 +181,6 @@ for frame in camera.capture_continuous(
             if ((bus.read_byte(address) * 10) < 500):
                 bus.write_byte(address, 2)
                 time.sleep(1)
-                bus.write_byte(address, 4)
             else:
                 bus.write_byte(address, 4)
     # show the frame
