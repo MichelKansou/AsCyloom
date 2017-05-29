@@ -106,7 +106,7 @@ for frame in camera.capture_continuous(
            if (targetLost > 5):
                print("Stop")
                bus.write_byte(address, 1)
-               if ((bus.read_byte(address) * 10) < 500 and (bus.read_byte(address) * 10 > 70)):
+               if ((bus.read_byte(address) * 10) < 500):
                    bus.write_byte(address, 2)
                    bus.write_byte(address, 4)
                else:
@@ -178,7 +178,7 @@ for frame in camera.capture_continuous(
             print("Stop")
             direction = 0
             bus.write_byte(address, 1)
-            if ((bus.read_byte(address) * 10) < 500 and (bus.read_byte(address) * 10 > 70)):
+            if ((bus.read_byte(address) * 10) < 500):
                 bus.write_byte(address, 2)
                 bus.write_byte(address, 4)
             else:
