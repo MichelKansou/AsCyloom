@@ -15,7 +15,7 @@ def isset(v):
         return 1
 
 # cascade directory
-cascPath = './resources/cascade_extreme.xml'
+cascPath = './resources/cascade_5.xml'
 cokeCascade = cv2.CascadeClassifier(cascPath)
 
 # I2C Raspberry
@@ -54,7 +54,7 @@ for frame in camera.capture_continuous(
     print("Object Distance : %d" % (bus.read_byte(address) * 10))
     if (searching == True and goToBase == False):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cokes = cokeCascade.detectMultiScale(gray, 2, 65)
+        cokes = cokeCascade.detectMultiScale(gray, 2, 25)
         # If a can of coke was found
         if len(cokes) > 0:
             targetLost = 0
@@ -74,7 +74,7 @@ for frame in camera.capture_continuous(
                    bus.write_byte(address, 0)
                    if direction != 1:
                        direction = 1
-                       if oy > 240:
+                       if oy > 220:
                           print("Captured")
                           bus.write_byte(address, 1)
                           searching = False
