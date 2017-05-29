@@ -107,7 +107,7 @@ for frame in camera.capture_continuous(
                print("Stop")
                bus.write_byte(address, 1)
                time.sleep(1)
-               if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70) and bus.read_byte(address) != 0):
+               if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70)):
                    bus.write_byte(address, 2)
                    time.sleep(0.5)
                    bus.write_byte(address, 4)
@@ -182,7 +182,7 @@ for frame in camera.capture_continuous(
             direction = 0
             bus.write_byte(address, 1)
             time.sleep(1)
-            if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70) and bus.read_byte(address) != 0):
+            if ((bus.read_byte(address) * 10) < 200 and (bus.read_byte(address) * 10 > 70)):
                 bus.write_byte(address, 2)
                 time.sleep(0.5)
                 bus.write_byte(address, 4)
