@@ -68,13 +68,13 @@ for frame in camera.capture_continuous(
                 by = y + h
                 ox = (x + bx)/2
                 oy = (y + by)/2
-                if (ox > 270 and ox < 360):
+                if (ox > 270 and ox < 340):
                    print("Center")
                    print ("Send Move Forward")
                    bus.write_byte(address, 0)
                    if direction != 1:
                        direction = 1
-                       if oy > 220:
+                       if oy > 240:
                           print("Captured")
                           bus.write_byte(address, 1)
                           searching = False
@@ -83,7 +83,7 @@ for frame in camera.capture_continuous(
                           bus.write_byte(address, 12)
                        else:
                           bus.write_byte(address, 1)
-                if ox > 360:
+                if ox > 340:
                    print("Right")
                    print("Send Move to Right")
                    if direction != 4:
