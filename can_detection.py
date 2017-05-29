@@ -15,7 +15,7 @@ def isset(v):
         return 1
 
 # cascade directory
-cascPath = './resources/cascade_extreme.xml'
+cascPath = './resources/cascade_5.xml'
 cokeCascade = cv2.CascadeClassifier(cascPath)
 
 # I2C Raspberry
